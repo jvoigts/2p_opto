@@ -11,7 +11,7 @@ const int trigPin = 2; // look for trigger input here, not needed if output is u
 const int controlPin = 12; // look for frame trigger input here
 
 int armed = LOW;                    // ledState used to set the LED
-unsigned long endMillis = 0;        // will store last time LED was updated
+unsigned long endMicros = 0;        // will store last time LED was updated
 int prevtrig = LOW;
 
 int line = 0;                      // keep track of what image scan line we're on
@@ -30,20 +30,20 @@ void setup() {
 void loop()
 {
 
-  unsigned long currentMillis = micros();
+  unsigned long currentMicros = micros();
 
   int trig = digitalRead(trigPin);
   int control = digitalRead(controlPin);  // set to HIGH if no control is needed (LED is gated/modulated from somewhere else)
 
   if ((trig == LOW) && (prevtrig == HIGH)) { // on high->low transitions
-    endMillis = currentMillis;
+    endMicros = currentMicros;
     armed = HIGH;
     line = line + 1;
   }
 
   if (armed == HIGH) {
     if (line % skiplines == 0 ) {
-      if ((currentMillis - endMillis > wait) ) {
+      if ((currentMicros - endMicros > wait) ) {
         if (control == HIGH) {
           digitalWrite(ledPin, HIGH);
           delayMicroseconds(duration);
